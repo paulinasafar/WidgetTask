@@ -1,0 +1,82 @@
+package com.company;
+
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Product p1 = new Product("Ball", 3);
+        Product p2 = new Product("Block", 1);
+        Product p3 = new Product("Yoga", 2);
+        Product p4 = new Product("Weights", 1);
+        Product p5 = new Product("Matt", 1);
+        Product p6 = new Product("Ball", 1);
+        Product p7 = new Product("Block", 6);
+        Product p8 = new Product("Ball", 5);
+        Product p9 = new Product("Trainer", 3);
+        Product p10 = new Product("Pillow", 1);
+
+        //LIST TO SEND THE PRODUCT-QUANTITY DATA
+        ArrayList<Product> productsList = new ArrayList<>();
+        productsList.add(p1);
+        productsList.add(p2);
+        productsList.add(p3);
+        productsList.add(p4);
+        productsList.add(p5);
+        productsList.add(p6);
+        productsList.add(p7);
+        productsList.add(p8);
+        productsList.add(p9);
+        productsList.add(p10);
+        System.out.println("In the List: " + productsList);
+        Collections.sort(productsList, new ProductComparator());
+
+        //GETTING BESTSELLING PRODUCTS
+        printTopProducts(productsList);
+
+
+    }
+
+    private static HashMap<String, Integer> fillMap(ArrayList<Product> productsList) {
+        HashMap<String, Integer> productsMap = new HashMap<>();
+
+        for (Product p : productsList) {
+            String pname = p.getProductName();
+            if (productsMap.containsKey(pname)) {
+                productsMap.put(pname, productsMap.get(pname) + p.getQuantity());
+            } else {
+                productsMap.put(pname, p.getQuantity());
+            }
+        }
+        return productsMap;
+    }
+
+    private static HashMap<String, Integer> sortByValue(ArrayList<Product> productsList) {
+        HashMap<String, Integer> productsMap = fillMap(productsList);
+        List<Map.Entry<String, Integer>> list =
+                new LinkedList<>(productsMap.entrySet());
+
+        Collections.sort(list, (m1, m2) -> {
+            if(m1.getValue() < m2.getValue()) return 1;
+            else if(m1.getValue() > m2.getValue()) return -1;
+            else return 0;
+        });
+
+        HashMap<String, Integer> temp = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
+
+    public static void printTopProducts(ArrayList<Product> productsList) {
+        HashMap<String, Integer> topProducts = sortByValue(productsList);;
+        System.out.println("\nToday's Bestsellers:");
+        int i = 1;
+        for (String key : topProducts.keySet()) {
+            if(i<4)
+                System.out.println(i++ + ". " + key + " sold in quantity: " + topProducts.get(key));
+        }
+    }
+
+}
